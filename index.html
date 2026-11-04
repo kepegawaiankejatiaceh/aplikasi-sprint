@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
+<meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet">
 <title>Generator Surat Perintah &amp; SPPD</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
@@ -27,6 +29,9 @@ button.go{background:#217346;font-size:1.05em;padding:11px 22px}
 table{width:100%;border-collapse:collapse;font-size:.86em}td,th{border:1px solid #d5dce4;padding:5px 7px;text-align:left}th{background:#eef2f7}
 .mode label{display:inline-block;margin-right:20px;font-size:.95em}.mode input{width:auto}
 .note{font-size:.8em;color:#5b6b7b}#st{font-size:.82em;margin-top:6px}
+.nw{position:relative;overflow:hidden}.nw textarea{display:block;padding-left:40px}
+.ng{position:absolute;left:1px;top:1px;width:34px;overflow:hidden;pointer-events:none;color:#1f4e79;font-weight:600;text-align:right;font-size:inherit}
+.ng span{position:absolute;right:0}.nm{position:absolute;visibility:hidden;left:0;top:0;pointer-events:none;white-space:pre-wrap;overflow-wrap:break-word;box-sizing:content-box}
 </style></head><body>
 <header><h1>Generator Surat Perintah &amp; SPPD</h1><small>Data pegawai dari Excel / Google Sheets → hasil Word (.docx) yang dapat diedit</small></header>
 <div class="wrap"><main>
@@ -47,13 +52,12 @@ table{width:100%;border-collapse:collapse;font-size:.86em}td,th{border:1px solid
 <div class="note" style="margin-top:6px">Template menyimpan Judul, Untuk, Menimbang, Dasar, teks "Kepada" &amp; judul Lampiran (Mode Tabel) sesuai isian di halaman ini saat disimpan. Tersimpan di browser ini.</div>
 <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="s" style="padding:6px 12px;font-size:.88em" onclick="expT()">⬇ Ekspor semua template (.json)</button><button class="s" style="padding:6px 12px;font-size:.88em" onclick="$('impF').click()">⬆ Impor template</button><input type="file" id="impF" accept=".json" style="display:none"><span class="note">Ekspor/impor mencakup template Surat Perintah dan Tembusan.</span></div>
 <details style="margin-top:10px"><summary style="cursor:pointer;font-size:.88em">⚙ Pengaturan template online (Google Sheets)</summary>
-<label>Alamat layanan (URL Apps Script, berakhiran /exec)</label><input id="tplApi" placeholder="https://script.google.com/macros/s/AKfycbyHy62X2AQoRf_j1TRzRkSGtwQO4cKNFiseiQJfZEIvSK06ITTYwBWXCuJQqLAorMpM/exec">
-<label>Kode akses (diperlukan untuk menyimpan/menghapus template)</label><input id="tplKode" type="password" autocomplete="off">
+<label>Alamat layanan (URL Apps Script, berakhiran /exec)</label><input id="tplApi" placeholder="Kosongkan untuk template online">
 <div style="margin-top:8px"><button class="s" style="padding:6px 12px" onclick="syncT(1)">🔄 Muat ulang template dari server</button></div></details>
 <div id="tplSt" class="note" style="margin-top:6px"></div></div>
 
 <div class="card"><h3>3. Data Umum</h3>
-<div class="g2"><div><label>Nomor Surat Perintah</label><input id="nomor" value="PRIN-      /L.1/Cp./.../2026"></div>
+<div class="g2"><div><label>Nomor Surat Perintah</label><input id="nomor" value="PRIN-      /L.1/Cp../../2026"></div>
 <div><label>Tanggal Surat</label><input type="date" id="tgl"></div></div>
 <label>Untuk (poin 1) — juga dipakai sebagai Maksud Perjalanan Dinas</label>
 <textarea id="untuk1" rows="4">Mengikuti .... pada hari .... tanggal .... bertempat di ....;</textarea>
@@ -68,7 +72,7 @@ table{width:100%;border-collapse:collapse;font-size:.86em}td,th{border:1px solid
 <label style="display:flex;gap:8px;align-items:center;font-weight:400;margin-top:6px"><input type="checkbox" id="esign2" checked style="width:auto"> Sertakan logo tanda tangan elektronik (#KEJAKSAANDIGITAL) pada ketiga penandatangan di lembar terakhir SPD (paling atas dan paling bawah)</label></div>
 
 <div class="card"><h3>4. Data Perjalanan Dinas (SPPD)</h3>
-<div class="g2"><div><label>Nomor SPPD (tulis {n} untuk nomor urut otomatis per pegawai)</label><input id="nsppd" value="SPPD-{n}/L.1/Cu/.../2026"></div>
+<div class="g2"><div><label>Nomor SPPD (tulis {n} untuk nomor urut otomatis per pegawai)</label><input id="nsppd" value="SPPD-{n}/L.1/Cu/../2026"></div>
 <div><label>Nomor urut awal</label><input type="number" id="n0" value="1" min="1"></div>
 <div><label>Tempat berangkat</label><input id="dari" value="Banda Aceh"></div>
 <div><label>Tempat tujuan</label><input id="ke"></div>
@@ -89,12 +93,12 @@ table{width:100%;border-collapse:collapse;font-size:.86em}td,th{border:1px solid
 <table style="margin-top:10px"><thead><tr><th>No</th><th>Nama</th><th>Gol/Pangkat</th><th>Jabatan</th><th></th></tr></thead><tbody id="tb2"></tbody></table></div>
 
 <div class="card"><h3>6. Teks Tetap (dapat diedit — satu butir per baris)</h3>
-<label>Menimbang</label><textarea id="menimbang" rows="5">bahwa untuk memenuhi maksud surat ...., perlu menugaskan pejabat yang telah ditentukan mengikuti kegiatan .... ;
+<label>Menimbang</label><textarea id="menimbang" rows="5">bahwa untuk memenuhi maksud surat ...., perlu menugaskan pejabat yang telah ditentukan mengikuti .... ;
 bahwa sebagai pelaksanaannya perlu dikeluarkan Surat Perintah Kepala Kejaksaan Tinggi Aceh.</textarea>
-<label>Dasar</label><textarea id="dasar" rows="7">Undang-Undang Nomor 16 Tahun 2004 tentang Kejaksaan Republik Indonesia sebagaimana telah diubah dengan Undang-Undang Nomor 11 Tahun 2021 tentang Perubahan atass Undang-Undang Nomor 16 Tahun 2004 tentang Kejaksaan Republik Indonesia;
-Peraturan Presiden Nomor 38 Tahun 2010 tentang Organisasi dan Tata Kerja Kejaksaan Republik Indonesia yang telah beberapa kali diubah terakhir dengan Peraturan Presiden Nomor 45 Tahun 2026 tentang Perubahan Keempat Atas Peraturan Presiden Nomor 38 Tahun 2010 tentang Organisasi dan Tata Kerja Kejaksaan Republik Indonesia;
-Peraturan Jaksa Agung Republik Indonesia Nomor : PER-006/A/JA/07/2017 tanggal 20 Juli 2017 tentang Organisasi dan Tata Kerja Kejaksaan Republik Indonesia sebagaimana telah empat kali diubah terakhir dengan Peraturan Kejaksaan Republik Indonesia Nomor 3 Tahun 2024 tanggal 1 Agustus 2024;
-Surat ..........</textarea>
+<label>Dasar</label><textarea id="dasar" rows="7">Undang-Undang Nomor 16 Tahun 2004 tentang Kejaksaan Republik Indonesia sebagaimana telah diubah dengan Undang-Undang Nomor 11 Tahun 2021 tentang Perubahan atas Undang-Undang Nomor 16 Tahun 2004 tentang Kejaksaan Republik Indonesia ;
+Peraturan Presiden Nomor 38 Tahun 2010 tentang Organisasi dan Tata Kerja Kejaksaan yang telah beberapa kali diubah terakhir dengan Peraturan Presiden Nomor 45 Tahun 2026 tentang Perubahan Keempat atas Peraturan Presiden Nomor 38 Tahun 2010 tentang Organisasi dan Tata Kerja Kejaksaan Republik Indonesia ;
+Peraturan Jaksa Agung Nomor PER-006/A/JA/07/2017 tentang Organisasi dan Tata Kerja Kejaksaan Republik Indonesia sebagaimana telah beberapa kali diubah terakhir dengan Peraturan Kejaksaan Nomor 3 Tahun 2024 tentang Perubahan Keempat atas Peraturan Jaksa Agung Nomor PER-006/A/JA/07/2017 tentang Organisasi dan Tata Kerja Kejaksaan Republik Indonesia ;
+Surat ....</textarea>
 <label>Untuk — poin 2 dan seterusnya</label><textarea id="untukLain" rows="3">Melaporkan hasil pelaksanaan perintah ini kepada Kepala Kejaksaan Tinggi Aceh ;
 Melaksanakan perintah ini sebaik-baiknya dengan penuh rasa tanggung jawab.</textarea>
 <label>Template Tembusan</label>
@@ -105,7 +109,7 @@ Yth. Asisten Pengawasan Kejaksaan Tinggi Aceh ;
 Arsip.</textarea>
 <label>Teks pada Mode Tabel — kolom "Kepada"</label><input id="kepadaTabel" value="Para pegawai yang namanya sebagaimana tersebut dalam Lampiran Surat Perintah ini.">
 <label>Judul Lampiran (Mode Tabel) — satu baris per baris judul</label>
-<textarea id="judulLamp" rows="2">DAFTAR NAMA PEJABAT/PEGAWAI ....</textarea></div>
+<textarea id="judulLamp" rows="2">NAMA-NAMA PEJABAT/PEGAWAI ....</textarea></div>
 
 <div class="card" style="text-align:center"><button class="go" onclick="gen()">⬇ Buat File Word (.docx)</button>
 <div class="note" style="margin-top:6px">Isi: Surat Perintah (+ Lampiran bila Mode Tabel), lalu SPPD lembar depan &amp; belakang untuk tiap pegawai.</div></div>
@@ -161,14 +165,15 @@ function hit(){if(!$('tb').value||!$('tk').value)return;const n=Math.round((new 
 $('tb').onchange=$('tk').onchange=hit;$('tgl').value=new Date().toISOString().slice(0,10);
 
 // ===== TEMPLATE =====
+var NUMS=[];function redrawNums(){NUMS.forEach(f=>f())}
 const TF=['judul','untuk1','menimbang','dasar','untukLain','kepadaTabel','judulLamp'];
 const KIND={tpl:{key:'spTpl',sel:'tplSel',name:'tplName',f:TF},tm:{key:'spTm',sel:'tmSel',name:'tmName',f:['tembusan']}};
 const DB={};
 const ldj=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
 const fillSel=k=>{$(KIND[k].sel).innerHTML=DB[k].map(t=>`<option value="${t.id}">${t.nama.replace(/</g,'&lt;')}</option>`).join('')};
-function applyT(k){const c=KIND[k],t=DB[k].find(x=>x.id===$(c.sel).value);if(!t)return;c.f.forEach(f=>$(f).value=t[f]||'');$(c.name).value=t.nama}
+function applyT(k){const c=KIND[k],t=DB[k].find(x=>x.id===$(c.sel).value);if(!t)return;c.f.forEach(f=>$(f).value=t[f]||'');$(c.name).value=t.nama;redrawNums()}
 function persist(k){try{localStorage.setItem(KIND[k].key,JSON.stringify(DB[k]))}catch(e){alert('Penyimpanan browser tidak tersedia.')}}
-const TPL_API="";   // isi dengan URL Apps Script (…/exec) agar otomatis dipakai semua pengguna
+const TPL_API="https://script.google.com/macros/s/AKfycbyHy62X2AQoRf_j1TRzRkSGtwQO4cKNFiseiQJfZEIvSK06ITTYwBWXCuJQqLAorMpM/exec";   // isi dengan URL Apps Script (…/exec) agar otomatis dipakai semua pengguna
 let synced=0;
 const apiUrl=()=>(TPL_API||$('tplApi').value||'').trim();
 const tst=(t,c)=>{const e=$('tplSt');e.textContent=t;e.style.color=c||'#5b6b7b'};
@@ -182,8 +187,8 @@ async function syncT(){if(!apiUrl()){tst('Mode lokal: template hanya tersimpan d
   synced=1;tst('✅ Template tersinkron dengan server — '+jam(),'#217346')}
  catch(e){tst('⚠️ Gagal memuat template dari server ('+e.message+'). Memakai template tersimpan di browser ini.','#c00')}}
 async function remoteSave(k,t,base,force){
- try{const {id,nama,updatedAt,...d}=t,kode=$('tplKode').value.trim();if(!kode){alert('Isi Kode akses pada "Pengaturan template online" terlebih dahulu.');return null}
-  const j=await apiCall({action:'save',kode,force,item:{id,kind:k,nama,data:JSON.stringify(d),base}});
+ try{const {id,nama,updatedAt,...d}=t;
+  const j=await apiCall({action:'save',force,item:{id,kind:k,nama,data:JSON.stringify(d),base}});
   if(j.conflict){if(confirm('Template ini sudah diubah oleh orang lain sejak Anda memuatnya.\nTimpa dengan versi Anda?'))return remoteSave(k,t,base,true);return null}
   if(!j.ok){alert('Gagal menyimpan: '+(j.error||'tidak diketahui'));return null}
   return j.updatedAt}catch(e){alert('Gagal menghubungi server: '+e.message);return null}}
@@ -194,11 +199,10 @@ async function saveT(k,baru){const c=KIND[k],nama=V(c.name),cur=Object.fromEntri
  const i=DB[k].findIndex(x=>x.id===t.id);i<0?DB[k].push(t):DB[k][i]=t;fillSel(k);$(c.sel).value=t.id;persist(k);alert('Template tersimpan'+(apiUrl()?' di server.':' di browser ini.'))}
 async function delT(k){const c=KIND[k];if(DB[k].length<2)return alert('Minimal harus ada satu template.');const i=DB[k].findIndex(x=>x.id===$(c.sel).value);
  if(i<0||!confirm('Hapus template "'+DB[k][i].nama+'"'+(apiUrl()?' dari server (berlaku untuk semua pengguna)':'')+'?'))return;
- if(apiUrl()){try{const kode=$('tplKode').value.trim();if(!kode)return alert('Isi Kode akses pada "Pengaturan template online" terlebih dahulu.');
-  const j=await apiCall({action:'delete',kode,id:DB[k][i].id});if(!j.ok)return alert('Gagal menghapus: '+(j.error||'tidak diketahui'))}catch(e){return alert('Gagal menghubungi server: '+e.message)}}
+ if(apiUrl()){try{const j=await apiCall({action:'delete',id:DB[k][i].id});if(!j.ok)return alert('Gagal menghapus: '+(j.error||'tidak diketahui'))}catch(e){return alert('Gagal menghubungi server: '+e.message)}}
  DB[k].splice(i,1);persist(k);fillSel(k);applyT(k)}
 (function(){const cur=Object.fromEntries(TF.map(f=>[f,$(f).value]));
- DB.tpl=ldj('spTpl',[{id:'t1',nama:'Contoh: Sprint Diklat',...cur},{id:'t0',nama:'Kosong (isi sendiri)',judul:'SURAT PERINTAH',untuk1:'',menimbang:'',dasar:'',untukLain:cur.untukLain,kepadaTabel:cur.kepadaTabel,judulLamp:'NAMA-NAMA PEJABAT/PEGAWAI DALAM RANGKA KEGIATAN ...\nPADA JAJARAN KEJAKSAAN TINGGI ACEH'}]);
+ DB.tpl=ldj('spTpl',[{id:'t1',nama:'Contoh: Kegiatan FGD',...cur},{id:'t0',nama:'Kosong (isi sendiri)',judul:'SURAT PERINTAH',untuk1:'',menimbang:'',dasar:'',untukLain:cur.untukLain,kepadaTabel:cur.kepadaTabel,judulLamp:'NAMA-NAMA PEJABAT/PEGAWAI DALAM RANGKA KEGIATAN ...\nPADA JAJARAN KEJAKSAAN TINGGI ACEH'}]);
  DB.tm=ldj('spTm',[{id:'m1',nama:'Standar (Wakil Kajati, Asisten)',tembusan:$('tembusan').value},{id:'m0',nama:'Kosong',tembusan:''}]);
  ['tpl','tm'].forEach(k=>{fillSel(k);$(KIND[k].name).value=DB[k][0].nama;persist(k)})})();
 function expT(){const bl=new Blob([JSON.stringify({versi:1,tpl:DB.tpl,tm:DB.tm},null,1)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='template_surat_perintah.json';a.click()}
@@ -206,9 +210,8 @@ $('impF').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileRe
  ['tpl','tm'].forEach(k=>{const c=KIND[k],cur=$(c.sel).value;(Array.isArray(j[k])?j[k]:[]).forEach(t=>{if(!t||!t.id||!t.nama)return;const o={id:String(t.id),nama:String(t.nama)};c.f.forEach(q=>o[q]=String(t[q]??''));
   const i=DB[k].findIndex(y=>y.id===o.id);i<0?DB[k].push(o):DB[k][i]=o;n++});persist(k);fillSel(k);$(c.sel).value=cur});
  alert(n+' template berhasil diimpor.')}catch(err){alert('File template tidak valid.')}e.target.value=''};r.readAsText(f)};
-try{$('tplApi').value=localStorage.getItem('tplApi')||'';$('tplKode').value=localStorage.getItem('tplKode')||''}catch(e){}
+try{$('tplApi').value=localStorage.getItem('tplApi')||'';}catch(e){}
 $('tplApi').onchange=()=>{try{localStorage.setItem('tplApi',$('tplApi').value.trim())}catch(e){}syncT()};
-$('tplKode').onchange=()=>{try{localStorage.setItem('tplKode',$('tplKode').value.trim())}catch(e){}};
 syncT();
 // ===== PEMBUAT DOKUMEN WORD =====
 const {Document,Packer,Paragraph,TextRun,Table,TableRow,TableCell,ImageRun,AlignmentType:AL,BorderStyle:BS,WidthType,TabStopType,VerticalAlign}=docx;
@@ -258,7 +261,7 @@ function sppdDepan(F,p,i,fol=[]){const z=18,V=(t,o={})=>P(t,{f:VD,z,af:20,...o})
  if(m=x.match(/^\s+([a-d])\. (.*)$/))return V(`${m[1]}.\t${m[2]}`,{l:720,h:360});return V(x)};
  const VB=x=>{const m=x.match(/^([a-d])\. ([\s\S]*)$/);return m?V(`${m[1]}.\t${m[2]}`,{l:360,h:360}):/^\d+\.\t/.test(x)?V(x,{l:360,h:360}):V(x)};
  const no=F.nsppd.replace('{n}',(+F.n0)+i),r=(L,Rr)=>{const n=Math.max(L.length,Rr.length);return Array.from({length:n},(_,k)=>{const last=k==n-1,o={b:last?bb:noB,mt:k?0:50,mb:last?50:0};return[cell(w[0],[LB(L[k]||'')],o),cell(w[1],[VB(Rr[k]||'')],o)]})};
- return[...kopKecil([V('Lembar ke :',{l:500}),V('Kode Nomor :',{l:500}),V('Nomor : '+no,{l:500})]),gap(60),
+ return[...kopKecil([V('Lembar ke\t:',{l:4000,tabs:[5300]}),V('Kode Nomor\t:',{l:4000,tabs:[5300]}),V('Nomor\t: '+no,{l:4000,tabs:[5300]})]),gap(60),
   P('SURAT PERJALANAN DINAS (SPD)',{f:VD,z:20,b:1,u:1,al:AL.CENTER,af:160}),
   tbl(w,[r(['1. Pejabat berwenang memberi perintah'],[F.ttdJab.toUpperCase()]),r(['2. Nama pegawai yang diperintahkan'],[nm(p)]),
    r(['3. a. Pangkat dan Golongan menurut PP No.','    b. Jabatan','    c. Gaji Pokok','    d. Tingkat menurut Perjalanan Dinas'],['a. '+gl(p),'b. '+jb(p),'c. '+F.gaji,'d. '+F.tingkat]),
@@ -297,4 +300,20 @@ async function prev(){const box=$('pv');if(!window.DP||!DP.renderAsync){box.text
 function zoomPv(){const w=$('pvw').clientWidth-16;$('pv').style.zoom=Math.min(1,w/816)}
 window.addEventListener('resize',zoomPv);['input','change'].forEach(ev=>document.addEventListener(ev,prevD));
 window.addEventListener('load',()=>setTimeout(prev,300));
+
+// ===== PENOMORAN LANGSUNG PADA KOLOM TEKS TETAP =====
+function numberize(id,fmt,start){const ta=$(id),w=document.createElement('div'),g=document.createElement('div'),m=document.createElement('div');
+ w.className='nw';g.className='ng';m.className='nm';ta.parentNode.insertBefore(w,ta);w.append(ta,g,m);
+ const lab=i=>fmt==='a'?String.fromCharCode(97+i)+'.':(start+i)+'.';
+ function draw(){const cs=getComputedStyle(ta),pl=parseFloat(cs.paddingLeft),pr=parseFloat(cs.paddingRight);
+  ['fontFamily','fontSize','fontWeight','letterSpacing','lineHeight','paddingTop','paddingBottom','paddingLeft','paddingRight','textIndent'].forEach(k=>m.style[k]=cs[k]);
+  m.style.width=Math.max(ta.clientWidth-pl-pr,10)+'px';g.style.height=ta.clientHeight+'px';g.style.lineHeight=cs.lineHeight;
+  const L=ta.value.split(/\r?\n/);m.innerHTML='';
+  const ds=L.map(t=>{const d=document.createElement('div');d.textContent=t||'\u200b';m.appendChild(d);return d});
+  g.innerHTML='';let n=0;
+  L.forEach((t,i)=>{if(!t.trim())return;const sp=document.createElement('span');sp.textContent=lab(n++);sp.style.top=(ds[i].offsetTop-ta.scrollTop)+'px';g.appendChild(sp)})}
+ ta.addEventListener('input',draw);ta.addEventListener('scroll',draw);
+ if(window.ResizeObserver)new ResizeObserver(draw).observe(ta);window.addEventListener('resize',draw);
+ NUMS.push(draw);draw()}
+numberize('menimbang','a');numberize('dasar','1',1);numberize('untukLain','1',2);numberize('tembusan','1',1);
 </script></body></html>
