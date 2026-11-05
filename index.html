@@ -52,7 +52,7 @@ table{width:100%;border-collapse:collapse;font-size:.86em}td,th{border:1px solid
 <div class="note" style="margin-top:6px">Template menyimpan Judul, Untuk, Menimbang, Dasar, teks "Kepada" &amp; judul Lampiran (Mode Tabel) sesuai isian di halaman ini saat disimpan. Tersimpan di browser ini.</div>
 <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="s" style="padding:6px 12px;font-size:.88em" onclick="expT()">⬇ Ekspor semua template (.json)</button><button class="s" style="padding:6px 12px;font-size:.88em" onclick="$('impF').click()">⬆ Impor template</button><input type="file" id="impF" accept=".json" style="display:none"><span class="note">Ekspor/impor mencakup template Surat Perintah dan Tembusan.</span></div>
 <details style="margin-top:10px"><summary style="cursor:pointer;font-size:.88em">⚙ Pengaturan template online (Google Sheets)</summary>
-<label>Alamat layanan (URL Apps Script, berakhiran /exec)</label><input id="tplApi" placeholder="Kosongkan untuk template online">
+<label>Alamat layanan (URL Apps Script, berakhiran /exec)</label><input id="tplApi" placeholder="https://script.google.com/macros/library/d/1gt1e8BOicF_XDPyOD1gkYAmV6KJ1PAoyfLteVzPQi3HpB1Z-nhcMUWaN/2">
 <div style="margin-top:8px"><button class="s" style="padding:6px 12px" onclick="syncT(1)">🔄 Muat ulang template dari server</button></div></details>
 <div id="tplSt" class="note" style="margin-top:6px"></div></div>
 
@@ -173,7 +173,7 @@ const ldj=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){ret
 const fillSel=k=>{$(KIND[k].sel).innerHTML=DB[k].map(t=>`<option value="${t.id}">${t.nama.replace(/</g,'&lt;')}</option>`).join('')};
 function applyT(k){const c=KIND[k],t=DB[k].find(x=>x.id===$(c.sel).value);if(!t)return;c.f.forEach(f=>$(f).value=t[f]||'');$(c.name).value=t.nama;redrawNums()}
 function persist(k){try{localStorage.setItem(KIND[k].key,JSON.stringify(DB[k]))}catch(e){alert('Penyimpanan browser tidak tersedia.')}}
-const TPL_API="https://script.google.com/macros/s/AKfycbyHy62X2AQoRf_j1TRzRkSGtwQO4cKNFiseiQJfZEIvSK06ITTYwBWXCuJQqLAorMpM/exec";   // isi dengan URL Apps Script (…/exec) agar otomatis dipakai semua pengguna
+const TPL_API="";   // isi dengan URL Apps Script (…/exec) agar otomatis dipakai semua pengguna
 let synced=0;
 const apiUrl=()=>(TPL_API||$('tplApi').value||'').trim();
 const tst=(t,c)=>{const e=$('tplSt');e.textContent=t;e.style.color=c||'#5b6b7b'};
@@ -253,13 +253,18 @@ function lampiran(F,S){const w=[600,3800,4655,1745],H=(t,x)=>cell(x,[P(t,{b:1,al
   ...S.map((p,i)=>[cell(w[0],[P((i+1)+'.',{z:20})],{b:allB}),
    cell(w[1],[P(nm(p),{z:20,b:1}),P(gl(p),{z:20}),...(p.NIP?[P('NIP. '+p.NIP,{z:20})]:[]),...(p.NRP?[P('NRP. '+p.NRP,{z:20})]:[])],{b:allB}),
    cell(w[2],[P(jb(p),{z:20})],{b:allB}),cell(w[3],[P('')],{b:allB})])];
- return[...kopKecil([P('LAMPIRAN SURAT PERINTAH KEPALA KEJAKSAAN TINGGI ACEH',{z:20,l:500}),P('NOMOR : '+F.nomor,{z:20,l:500}),P('TANGGAL : '+dt(F.tgl),{z:20,l:500})],1),gap(160),
+ return[...kopKecil([P('LAMPIRAN SURAT PERINTAH KEPALA KEJAKSAAN TINGGI ACEH',{z:20,l:500}),P('NOMOR\t: '+F.nomor,{z:20,l:500,tabs:[1900]}),P('TANGGAL\t: '+dt(F.tgl),{z:20,l:500,tabs:[1900]})],1),gap(160),
   ...lines(F.judulLamp).map(x=>P(x,{b:1,al:AL.CENTER,z:22})),gap(160),tbl(w,rows,allB),gap(300),...ttd(F,{noKeluar:1,z:20})]}
 function sppdDepan(F,p,i,fol=[]){const z=18,V=(t,o={})=>P(t,{f:VD,z,af:20,...o}),w=[3500,7300],bb={top:NB,left:NB,right:NB,bottom:LN};
  const LB=x=>{let m;if(m=x.match(/^(\d+)\. ([a-d])\. (.*)$/))return V(`${m[1]}.\t${m[2]}.\t${m[3]}`,{l:720,h:720,tabs:[360,720]});
  if(m=x.match(/^(\d+)\. (.*)$/))return V(`${m[1]}.\t${m[2]}`,{l:360,h:360});
  if(m=x.match(/^\s+([a-d])\. (.*)$/))return V(`${m[1]}.\t${m[2]}`,{l:720,h:360});return V(x)};
  const VB=x=>{const m=x.match(/^([a-d])\. ([\s\S]*)$/);return m?V(`${m[1]}.\t${m[2]}`,{l:360,h:360}):/^\d+\.\t/.test(x)?V(x,{l:360,h:360}):V(x)};
+ const lahir=q=>{const d=String(q.NIP||'').replace(/\D/g,'');if(d.length<8)return'';const y=d.slice(0,4),m=d.slice(4,6),dd=d.slice(6,8);return(+y>1900&&+m>=1&&+m<=12&&+dd>=1&&+dd<=31)?dd+'-'+m+'-'+y:''};
+ const pengRow=fl=>{const cw=[2250,2400,1750,4240],hb={...noB,bottom:LN};
+  const hdr=[cell(cw[0],[V('8.\tPengikut',{l:360,h:360})],{b:hb}),cell(cw[1],[V('N a m a',{al:AL.CENTER})],{b:hb}),cell(cw[2],[V('Tanggal Lahir')],{b:hb}),cell(cw[3],[V('Jabatan')],{b:hb})];
+  const rs=fl.map((q,j)=>[cell(cw[0]+cw[1],[V([R((j+1)+'.\t',{f:VD,z}),R(nm(q),{f:VD,z,b:1})],{l:360,h:360})],{b:noB,sp:2}),cell(cw[2],[V(lahir(q))],{b:noB}),cell(cw[3],[V(jb(q))],{b:noB})]);
+  return[[cell(10800,[tbl(cw,[hdr,...rs],tNo),P('',{af:0})],{b:bb,sp:2})]]};
  const no=F.nsppd.replace('{n}',(+F.n0)+i),r=(L,Rr)=>{const n=Math.max(L.length,Rr.length);return Array.from({length:n},(_,k)=>{const last=k==n-1,o={b:last?bb:noB,mt:k?0:50,mb:last?50:0};return[cell(w[0],[LB(L[k]||'')],o),cell(w[1],[VB(Rr[k]||'')],o)]})};
  return[...kopKecil([V('Lembar ke\t:',{l:4000,tabs:[5300]}),V('Kode Nomor\t:',{l:4000,tabs:[5300]}),V('Nomor\t: '+no,{l:4000,tabs:[5300]})]),gap(60),
   P('SURAT PERJALANAN DINAS (SPD)',{f:VD,z:20,b:1,u:1,al:AL.CENTER,af:160}),
@@ -268,7 +273,7 @@ function sppdDepan(F,p,i,fol=[]){const z=18,V=(t,o={})=>P(t,{f:VD,z,af:20,...o})
    r(['4. Maksud perjalanan dinas'],[F.untuk1]),r(['5. Alat angkutan yang dipergunakan'],[F.alat]),
    r(['6. a. Tempat berangkat','    b. Tempat tujuan'],['a. '+F.dari,'b. '+F.ke]),
    r(['7. a. Lamanya perjalanan dinas','    b. Tanggal berangkat','    c. Tanggal harus kembali'],['a. '+F.lama,'b. '+dt(F.tb),'c. '+dt(F.tk)]),
-   r(['8. Pengikut'],fol.length?fol.map((q,j)=>`${j+1}.\t${nm(q)}, NIP. ${q.NIP}`):[F.pengikut]),r(['9. Pembebanan Anggaran','    a. Instansi','    b. Mata Anggaran'],['','a. '+F.inst,'b. '+F.mata]),
+   (fol.length?pengRow(fol):r(['8. Pengikut'],[F.pengikut])),r(['9. Pembebanan Anggaran','    a. Instansi','    b. Mata Anggaran'],['','a. '+F.inst,'b. '+F.mata]),
    r(['10. Keterangan lain-lain'],[F.ket])].flat()),gap(200),
   ...ttd(F,{f:VD,z})]}
 function sppdBelakang(F){const w=[5400,5400],Z={f:VD,z:18,af:20},c=(a,ch,b=allB)=>cell(w[a],ch,{b}),Q=t=>P(t,Z);
@@ -282,10 +287,11 @@ function sppdBelakang(F){const w=[5400,5400],Z={f:VD,z:18,af:20},c=(a,ch,b=allB)
   [c(0,pj(''),{...allB,top:NB}),c(1,pj(''),{...allB,top:NB})]],allB)]}
 function collect(){const F={mode:document.querySelector('input[name=mode]:checked').value};
  ['nomor','judul','untuk1','ttdNama','ttdPangkat','ttdNip','ttdJab','kota','nsppd','n0','dari','ke','lama','alat','gaji','pengikut','inst','mata','ket','menimbang','dasar','untukLain','tembusan','kepadaTabel','judulLamp'].forEach(k=>F[k]=V(k));
+ {const k=F.ttdNama.indexOf(',');F.ttdNama=k<0?F.ttdNama.toUpperCase():F.ttdNama.slice(0,k).toUpperCase()+F.ttdNama.slice(k)}F.ttdJab=F.ttdJab.toUpperCase();
  F.tingkat=document.querySelector('input[name=tingkat]:checked').value;F.esign=$('esign').checked;F.esign2=$('esign2').checked;F.asPeng=$('asPeng').checked;F.tgl=$('tgl').value;F.tb=$('tb').value;F.tk=$('tk').value;return F}
 function buildDoc(F,S){const pg={size:{width:12240,height:18720},margin:{top:576,bottom:500,left:720,right:720}},sec=ch=>({properties:{page:pg},children:ch});
  const s=[sec(sprint(F,S))];if(F.mode==='tabel')s.push(sec(lampiran(F,S)));
- const fol=F.asPeng?S.slice(1):[];(F.asPeng?S.slice(0,1):S).forEach((p,i)=>{s.push(sec(sppdDepan(F,p,i,fol)),sec(sppdBelakang(F)))});
+ const fol=F.asPeng?S.slice(1):[];(F.asPeng?S.slice(0,1):S).forEach((p,i)=>{s.push(sec(sppdDepan(F,p,i,fol)))});s.push(sec(sppdBelakang(F)));
  return new Document({creator:'Kejaksaan Tinggi Aceh',sections:s,styles:{default:{document:{run:{font:BK,size:22}}}}})}
 async function gen(){const F=collect();if(!sel.length)return alert('Tambahkan minimal satu pegawai terlebih dahulu.');
  const b=await Packer.toBlob(buildDoc(F,sel)),a=document.createElement('a');a.href=URL.createObjectURL(b);
