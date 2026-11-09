@@ -31,7 +31,7 @@ table{width:100%;border-collapse:collapse;font-size:.86em}td,th{border:1px solid
 .note{font-size:.8em;color:#5b6b7b}#st{font-size:.82em;margin-top:6px}
 .nw{position:relative;overflow:hidden}.nw textarea{display:block;padding-left:40px}
 .ng{position:absolute;left:1px;top:1px;width:34px;overflow:hidden;pointer-events:none;color:#1f4e79;font-weight:600;text-align:right;font-size:inherit}
-.ng span{position:absolute;right:0}.nm{position:absolute;visibility:hidden;left:0;top:0;pointer-events:none;white-space:pre-wrap;overflow-wrap:break-word;box-sizing:content-box}
+.ng span{position:absolute;text-align:right}.nw textarea,.nm{tab-size:4}.nm{position:absolute;visibility:hidden;left:0;top:0;pointer-events:none;white-space:pre-wrap;overflow-wrap:break-word;box-sizing:content-box}
 </style></head><body>
 <header><h1>Generator Surat Perintah &amp; SPPD</h1><small>Data pegawai dari Excel / Google Sheets → hasil Word (.docx) yang dapat diedit</small></header>
 <div class="wrap"><main>
@@ -93,23 +93,24 @@ table{width:100%;border-collapse:collapse;font-size:.86em}td,th{border:1px solid
 <table style="margin-top:10px"><thead><tr><th>No</th><th>Nama</th><th>Gol/Pangkat</th><th>Jabatan</th><th></th></tr></thead><tbody id="tb2"></tbody></table></div>
 
 <div class="card"><h3>6. Teks Tetap (dapat diedit — satu butir per baris)</h3>
-<label>Menimbang</label><textarea id="menimbang" rows="5">bahwa untuk memenuhi maksud surat ...., perlu menugaskan pejabat yang telah ditentukan mengikuti .... ;
+<div class="note" style="margin:-4px 0 6px">Untuk <b>sub-butir (level 2)</b> pada Menimbang, Dasar, dan Untuk: tekan <b>Tab</b> pada barisnya (Shift+Tab untuk mengembalikan). Penomorannya otomatis, misalnya 2. lalu a., b., c. Tekan Esc sebelum Tab untuk berpindah kolom dengan keyboard.</div>
+<label>Menimbang</label><textarea id="menimbang" rows="10">bahwa untuk memenuhi maksud surat ...., perlu menugaskan pejabat yang telah ditentukan mengikuti .... ;
 bahwa sebagai pelaksanaannya perlu dikeluarkan Surat Perintah Kepala Kejaksaan Tinggi Aceh.</textarea>
-<label>Dasar</label><textarea id="dasar" rows="7">Undang-Undang Nomor 16 Tahun 2004 tentang Kejaksaan Republik Indonesia sebagaimana telah diubah dengan Undang-Undang Nomor 11 Tahun 2021 tentang Perubahan atas Undang-Undang Nomor 16 Tahun 2004 tentang Kejaksaan Republik Indonesia ;
+<label>Dasar</label><textarea id="dasar" rows="14">Undang-Undang Nomor 16 Tahun 2004 tentang Kejaksaan Republik Indonesia sebagaimana telah diubah dengan Undang-Undang Nomor 11 Tahun 2021 tentang Perubahan atas Undang-Undang Nomor 16 Tahun 2004 tentang Kejaksaan Republik Indonesia ;
 Peraturan Presiden Nomor 38 Tahun 2010 tentang Organisasi dan Tata Kerja Kejaksaan yang telah beberapa kali diubah terakhir dengan Peraturan Presiden Nomor 45 Tahun 2026 tentang Perubahan Keempat atas Peraturan Presiden Nomor 38 Tahun 2010 tentang Organisasi dan Tata Kerja Kejaksaan Republik Indonesia ;
 Peraturan Jaksa Agung Nomor PER-006/A/JA/07/2017 tentang Organisasi dan Tata Kerja Kejaksaan Republik Indonesia sebagaimana telah beberapa kali diubah terakhir dengan Peraturan Kejaksaan Nomor 3 Tahun 2024 tentang Perubahan Keempat atas Peraturan Jaksa Agung Nomor PER-006/A/JA/07/2017 tentang Organisasi dan Tata Kerja Kejaksaan Republik Indonesia ;
 Surat ....</textarea>
-<label>Untuk — poin 2 dan seterusnya</label><textarea id="untukLain" rows="3">Melaporkan hasil pelaksanaan perintah ini kepada Kepala Kejaksaan Tinggi Aceh ;
+<label>Untuk — poin 2 dan seterusnya</label><textarea id="untukLain" rows="6">Melaporkan hasil pelaksanaan perintah ini kepada Kepala Kejaksaan Tinggi Aceh ;
 Melaksanakan perintah ini sebaik-baiknya dengan penuh rasa tanggung jawab.</textarea>
 <label>Template Tembusan</label>
 <div class="g2"><select id="tmSel" onchange="applyT('tm')"></select><input id="tmName" placeholder="Nama template tembusan"></div>
 <div style="margin:8px 0;display:flex;gap:8px;flex-wrap:wrap"><button onclick="saveT('tm')">💾 Simpan ke template terpilih</button><button onclick="saveT('tm',1)">➕ Simpan sebagai template baru</button><button class="s" onclick="delT('tm')">🗑 Hapus</button></div>
-<label>Tembusan</label><textarea id="tembusan" rows="5">Yth. Wakil Kepala Kejaksaan Tinggi Aceh ;
+<label>Tembusan</label><textarea id="tembusan" rows="10">Yth. Wakil Kepala Kejaksaan Tinggi Aceh ;
 Yth. Asisten Pengawasan Kejaksaan Tinggi Aceh ;
 Arsip.</textarea>
 <label>Teks pada Mode Tabel — kolom "Kepada"</label><input id="kepadaTabel" value="Para pegawai yang namanya sebagaimana tersebut dalam Lampiran Surat Perintah ini.">
 <label>Judul Lampiran (Mode Tabel) — satu baris per baris judul</label>
-<textarea id="judulLamp" rows="2">NAMA-NAMA PEJABAT/PEGAWAI ....</textarea></div>
+<textarea id="judulLamp" rows="4">NAMA-NAMA PEJABAT/PEGAWAI ....</textarea></div>
 
 <div class="card" style="text-align:center"><button class="go" onclick="gen()">⬇ Buat File Word (.docx)</button>
 <div class="note" style="margin-top:6px">Isi: Surat Perintah (+ Lampiran bila Mode Tabel), lalu SPPD lembar depan &amp; belakang untuk tiap pegawai.</div></div>
@@ -222,7 +223,10 @@ const P=(c,o={})=>new Paragraph({alignment:o.al,keepNext:o.kn,spacing:{before:o.
  indent:(o.l||o.h)?{left:o.l||0,hanging:o.h||0}:undefined,tabStops:o.tabs?o.tabs.map(x=>({type:TabStopType.LEFT,position:x})):o.h?[{type:TabStopType.LEFT,position:o.l}]:undefined,
  border:o.bb?{bottom:{style:BS.SINGLE,size:o.bb,color:'000000',space:1}}:undefined,children:Array.isArray(c)?c:[R(c,o)]});
 const lines=s=>String(s||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-const num=(a,f)=>a.map((t,i)=>P((f==='a'?String.fromCharCode(97+i):(i+1))+'.\t'+t,{al:AL.BOTH,l:400,h:400,af:80}));
+const lv2=l=>/^(\t| {2,})/.test(l),items=s=>String(s||'').split(/\r?\n/).filter(l=>l.trim()).map(l=>({l:lv2(l)?2:1,t:l.trim()}));
+const num=(a,f)=>{let n=0,q=0;return a.map(x=>{x=typeof x==='string'?{l:1,t:x}:x;
+ if(x.l===2&&n>0){const lb=f==='a'?(++q):String.fromCharCode(96+(++q));return P(lb+'.\t'+x.t,{al:AL.BOTH,l:800,h:400,af:60})}
+ q=0;n++;return P((f==='a'?String.fromCharCode(96+n):n)+'.\t'+x.t,{al:AL.BOTH,l:400,h:400,af:80})})};
 const cell=(w,ch,o={})=>new TableCell({width:{size:w,type:WidthType.DXA},children:ch,borders:o.b||noB,columnSpan:o.sp,verticalAlign:o.va,margins:{top:o.mt??50,bottom:o.mb??50,left:80,right:80}});
 const tbl=(cw,rows,b)=>new Table({width:{size:cw.reduce((a,c)=>a+c,0),type:WidthType.DXA},columnWidths:cw,borders:b||tNo,rows:rows.map(r=>new TableRow({cantSplit:true,children:r}))});
 const img=(w,h)=>new ImageRun({type:'png',data:LOGO,transformation:{width:w,height:h}});
@@ -243,9 +247,9 @@ function sprint(F,S){const mode=F.mode,w=[1555,287,8958];
  const kepada=mode==='daftar'?S.map((p,i)=>P([R((i+1)+'.\t'),...pegText(p,1)],{al:AL.BOTH,l:400,h:400,af:100})):[P(F.kepadaTabel,{al:AL.BOTH,af:80})];
  const c=[...kopBesar(),...lines(F.judul||'SURAT PERINTAH').map((x,i)=>P(x,{al:AL.CENTER,bf:i?0:120})),P('KEPALA KEJAKSAAN TINGGI ACEH',{al:AL.CENTER}),P('NOMOR : '+F.nomor,{al:AL.CENTER,af:200}),
   P('KEPALA KEJAKSAAN TINGGI ACEH,',{al:AL.CENTER,af:160}),
-  tbl(w,[row('Menimbang',num(lines(F.menimbang),'a')),row('Dasar',num(lines(F.dasar))),
+  tbl(w,[row('Menimbang',num(items(F.menimbang),'a')),row('Dasar',num(items(F.dasar))),
    [cell(w[0],[P('')]),cell(w[1],[P('')]),cell(w[2],[P('Memerintahkan:',{al:AL.CENTER,bf:60,af:60})])],
-   row('Kepada',kepada),row('Untuk',num([F.untuk1,...lines(F.untukLain)]))]),gap(),...ttd(F),gap(200)];
+   row('Kepada',kepada),row('Untuk',num([F.untuk1,...items(F.untukLain)]))]),gap(),...ttd(F),gap(200)];
  const t=lines(F.tembusan);if(t.length)c.push(P('Tembusan:',{z:20,af:40,kn:1}),...t.map((x,i)=>P((i+1)+'.\t'+x,{z:20,l:400,h:400,kn:i<t.length-1})));
  return c}
 function lampiran(F,S){const w=[600,3800,4655,1745],H=(t,x)=>cell(x,[P(t,{b:1,al:AL.CENTER,z:20})],{b:allB,va:VerticalAlign.CENTER}),G=ch=>ch;
@@ -308,18 +312,29 @@ window.addEventListener('resize',zoomPv);['input','change'].forEach(ev=>document
 window.addEventListener('load',()=>setTimeout(prev,300));
 
 // ===== PENOMORAN LANGSUNG PADA KOLOM TEKS TETAP =====
-function numberize(id,fmt,start){const ta=$(id),w=document.createElement('div'),g=document.createElement('div'),m=document.createElement('div');
+function numberize(id,fmt,start,sub){const ta=$(id),w=document.createElement('div'),g=document.createElement('div'),m=document.createElement('div');
  w.className='nw';g.className='ng';m.className='nm';ta.parentNode.insertBefore(w,ta);w.append(ta,g,m);
- const lab=i=>fmt==='a'?String.fromCharCode(97+i)+'.':(start+i)+'.';
+ const L1=i=>fmt==='a'?String.fromCharCode(97+i)+'.':(start+i)+'.',L2=i=>fmt==='a'?(i+1)+'.':String.fromCharCode(97+i)+'.',MK=/^(\t| {2,})/;
  function draw(){const cs=getComputedStyle(ta),pl=parseFloat(cs.paddingLeft),pr=parseFloat(cs.paddingRight);
-  ['fontFamily','fontSize','fontWeight','letterSpacing','lineHeight','paddingTop','paddingBottom','paddingLeft','paddingRight','textIndent'].forEach(k=>m.style[k]=cs[k]);
-  m.style.width=Math.max(ta.clientWidth-pl-pr,10)+'px';g.style.height=ta.clientHeight+'px';g.style.lineHeight=cs.lineHeight;
+  ['fontFamily','fontSize','fontWeight','letterSpacing','lineHeight','paddingTop','paddingBottom','paddingLeft','paddingRight','textIndent','tabSize'].forEach(k=>m.style[k]=cs[k]);
+  m.style.width=Math.max(ta.clientWidth-pl-pr,10)+'px';g.style.height=ta.clientHeight+'px';g.style.width=ta.clientWidth+'px';g.style.lineHeight=cs.lineHeight;
   const L=ta.value.split(/\r?\n/);m.innerHTML='';
-  const ds=L.map(t=>{const d=document.createElement('div');d.textContent=t||'\u200b';m.appendChild(d);return d});
-  g.innerHTML='';let n=0;
-  L.forEach((t,i)=>{if(!t.trim())return;const sp=document.createElement('span');sp.textContent=lab(n++);sp.style.top=(ds[i].offsetTop-ta.scrollTop)+'px';g.appendChild(sp)})}
+  const ds=L.map(t=>{const d=document.createElement('div'),k=sub&&MK.exec(t);
+   if(k){const sp=document.createElement('span');sp.textContent=k[0];d.append(sp,t.slice(k[0].length)||'\u200b')}else d.textContent=t||'\u200b';
+   m.appendChild(d);return d});
+  g.innerHTML='';let n=0,q=0;
+  L.forEach((t,i)=>{if(!t.trim())return;const sp=document.createElement('span');sp.style.top=(ds[i].offsetTop-ta.scrollTop)+'px';
+   if(sub&&n>0&&MK.test(t)){sp.textContent=L2(q++);sp.style.left=(pl+ds[i].firstChild.offsetWidth-30)+'px';sp.style.width='26px'}
+   else{q=0;sp.textContent=L1(n++);sp.style.left='0px';sp.style.width='34px'}
+   g.appendChild(sp)})}
  ta.addEventListener('input',draw);ta.addEventListener('scroll',draw);
+ if(sub)ta.addEventListener('keydown',e=>{if(e.key==='Escape'){ta._esc=1;return}
+  if(e.key!=='Tab'||e.ctrlKey||e.altKey||e.metaKey)return;if(ta._esc){ta._esc=0;return}e.preventDefault();
+  const v=ta.value,a=ta.selectionStart,b=ta.selectionEnd,s0=v.lastIndexOf('\n',a-1)+1;let en=v.indexOf('\n',b);if(en<0)en=v.length;
+  const blk=v.slice(s0,en).split('\n'),out=blk.map(l=>e.shiftKey?l.replace(/^(\t| {1,4})/,''):(MK.test(l)||!l.trim()?l:'\t'+l)),nv=out.join('\n');
+  ta.value=v.slice(0,s0)+nv+v.slice(en);ta.setSelectionRange(Math.max(a+out[0].length-blk[0].length,s0),b+nv.length-(en-s0));
+  ta.dispatchEvent(new Event('input',{bubbles:true}))});
  if(window.ResizeObserver)new ResizeObserver(draw).observe(ta);window.addEventListener('resize',draw);
  NUMS.push(draw);draw()}
-numberize('menimbang','a');numberize('dasar','1',1);numberize('untukLain','1',2);numberize('tembusan','1',1);
+numberize('menimbang','a',1,1);numberize('dasar','1',1,1);numberize('untukLain','1',2,1);numberize('tembusan','1',1,0);
 </script></body></html>
