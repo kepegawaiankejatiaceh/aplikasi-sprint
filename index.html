@@ -59,8 +59,6 @@ table{width:100%;border-collapse:collapse;font-size:.86em}td,th{border:1px solid
 <div class="card"><h3>3. Data Umum</h3>
 <div class="g2"><div><label>Nomor Surat Perintah</label><input id="nomor" value="PRIN-      /L.1/Cp../../2026"></div>
 <div><label>Tanggal Surat</label><input type="date" id="tgl"></div></div>
-<label>Untuk (poin 1) — juga dipakai sebagai Maksud Perjalanan Dinas</label>
-<textarea id="untuk1" rows="4">Mengikuti .... pada hari .... tanggal .... bertempat di ....;</textarea>
 <label>Pejabat Penandatangan (cari nama / NIP)</label>
 <div class="dd"><input id="sq" placeholder="Ketik nama atau NIP..." autocomplete="off"><div class="l" id="sd"></div></div>
 <div class="g3"><div><label>Nama</label><input id="ttdNama" value="TEUKU RAHMATSYAH, S.H., M.Kn."></div>
@@ -94,13 +92,14 @@ table{width:100%;border-collapse:collapse;font-size:.86em}td,th{border:1px solid
 
 <div class="card"><h3>6. Teks Tetap (dapat diedit — satu butir per baris)</h3>
 <div class="note" style="margin:-4px 0 6px">Untuk <b>sub-butir (level 2)</b> pada Menimbang, Dasar, dan Untuk: tekan <b>Tab</b> pada barisnya (Shift+Tab untuk mengembalikan). Penomorannya otomatis, misalnya 2. lalu a., b., c. Tekan Esc sebelum Tab untuk berpindah kolom dengan keyboard.</div>
-<label>Menimbang</label><textarea id="menimbang" rows="10">bahwa untuk memenuhi maksud surat ...., perlu menugaskan pejabat yang telah ditentukan mengikuti .... ;
+<label>Menimbang</label><textarea id="menimbang" rows="15">bahwa untuk memenuhi maksud surat ...., perlu menugaskan pejabat yang telah ditentukan mengikuti .... ;
 bahwa sebagai pelaksanaannya perlu dikeluarkan Surat Perintah Kepala Kejaksaan Tinggi Aceh.</textarea>
-<label>Dasar</label><textarea id="dasar" rows="14">Undang-Undang Nomor 16 Tahun 2004 tentang Kejaksaan Republik Indonesia sebagaimana telah diubah dengan Undang-Undang Nomor 11 Tahun 2021 tentang Perubahan atas Undang-Undang Nomor 16 Tahun 2004 tentang Kejaksaan Republik Indonesia ;
+<label>Dasar</label><textarea id="dasar" rows="15">Undang-Undang Nomor 16 Tahun 2004 tentang Kejaksaan Republik Indonesia sebagaimana telah diubah dengan Undang-Undang Nomor 11 Tahun 2021 tentang Perubahan atas Undang-Undang Nomor 16 Tahun 2004 tentang Kejaksaan Republik Indonesia ;
 Peraturan Presiden Nomor 38 Tahun 2010 tentang Organisasi dan Tata Kerja Kejaksaan yang telah beberapa kali diubah terakhir dengan Peraturan Presiden Nomor 45 Tahun 2026 tentang Perubahan Keempat atas Peraturan Presiden Nomor 38 Tahun 2010 tentang Organisasi dan Tata Kerja Kejaksaan Republik Indonesia ;
 Peraturan Jaksa Agung Nomor PER-006/A/JA/07/2017 tentang Organisasi dan Tata Kerja Kejaksaan Republik Indonesia sebagaimana telah beberapa kali diubah terakhir dengan Peraturan Kejaksaan Nomor 3 Tahun 2024 tentang Perubahan Keempat atas Peraturan Jaksa Agung Nomor PER-006/A/JA/07/2017 tentang Organisasi dan Tata Kerja Kejaksaan Republik Indonesia ;
 Surat ....</textarea>
-<label>Untuk — poin 2 dan seterusnya</label><textarea id="untukLain" rows="6">Melaporkan hasil pelaksanaan perintah ini kepada Kepala Kejaksaan Tinggi Aceh ;
+<label>Untuk — <b>butir 1 otomatis menjadi Maksud Perjalanan Dinas</b> pada SPD</label><textarea id="untuk" rows="15">Mengikuti .... pada hari .... tanggal .... bertempat di ....;
+Melaporkan hasil pelaksanaan perintah ini kepada Kepala Kejaksaan Tinggi Aceh ;
 Melaksanakan perintah ini sebaik-baiknya dengan penuh rasa tanggung jawab.</textarea>
 <label>Template Tembusan</label>
 <div class="g2"><select id="tmSel" onchange="applyT('tm')"></select><input id="tmName" placeholder="Nama template tembusan"></div>
@@ -167,12 +166,12 @@ $('tb').onchange=$('tk').onchange=hit;$('tgl').value=new Date().toISOString().sl
 
 // ===== TEMPLATE =====
 var NUMS=[];function redrawNums(){NUMS.forEach(f=>f())}
-const TF=['judul','untuk1','menimbang','dasar','untukLain','kepadaTabel','judulLamp'];
+const TF=['judul','untuk','menimbang','dasar','kepadaTabel','judulLamp'];
 const KIND={tpl:{key:'spTpl',sel:'tplSel',name:'tplName',f:TF},tm:{key:'spTm',sel:'tmSel',name:'tmName',f:['tembusan']}};
 const DB={};
 const ldj=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
 const fillSel=k=>{$(KIND[k].sel).innerHTML=DB[k].map(t=>`<option value="${t.id}">${t.nama.replace(/</g,'&lt;')}</option>`).join('')};
-function applyT(k){const c=KIND[k],t=DB[k].find(x=>x.id===$(c.sel).value);if(!t)return;c.f.forEach(f=>$(f).value=t[f]||'');$(c.name).value=t.nama;redrawNums()}
+function applyT(k){const c=KIND[k],t=DB[k].find(x=>x.id===$(c.sel).value);if(!t)return;c.f.forEach(f=>$(f).value=t[f]!=null?t[f]:(f==='untuk'?[t.untuk1,t.untukLain].filter(x=>x).join('\n'):''));$(c.name).value=t.nama;redrawNums()}
 function persist(k){try{localStorage.setItem(KIND[k].key,JSON.stringify(DB[k]))}catch(e){alert('Penyimpanan browser tidak tersedia.')}}
 const TPL_API="";   // isi dengan URL Apps Script (…/exec) agar otomatis dipakai semua pengguna
 let synced=0;
@@ -203,12 +202,12 @@ async function delT(k){const c=KIND[k];if(DB[k].length<2)return alert('Minimal h
  if(apiUrl()){try{const j=await apiCall({action:'delete',id:DB[k][i].id});if(!j.ok)return alert('Gagal menghapus: '+(j.error||'tidak diketahui'))}catch(e){return alert('Gagal menghubungi server: '+e.message)}}
  DB[k].splice(i,1);persist(k);fillSel(k);applyT(k)}
 (function(){const cur=Object.fromEntries(TF.map(f=>[f,$(f).value]));
- DB.tpl=ldj('spTpl',[{id:'t1',nama:'Contoh: Kegiatan FGD',...cur},{id:'t0',nama:'Kosong (isi sendiri)',judul:'SURAT PERINTAH',untuk1:'',menimbang:'',dasar:'',untukLain:cur.untukLain,kepadaTabel:cur.kepadaTabel,judulLamp:'NAMA-NAMA PEJABAT/PEGAWAI DALAM RANGKA KEGIATAN ...\nPADA JAJARAN KEJAKSAAN TINGGI ACEH'}]);
+ DB.tpl=ldj('spTpl',[{id:'t1',nama:'Contoh: Kegiatan FGD',...cur},{id:'t0',nama:'Kosong (isi sendiri)',judul:'SURAT PERINTAH',untuk:'...;\n'+cur.untuk.split(/\r?\n/).slice(1).join('\n'),menimbang:'',dasar:'',kepadaTabel:cur.kepadaTabel,judulLamp:'NAMA-NAMA PEJABAT/PEGAWAI DALAM RANGKA KEGIATAN ...\nPADA JAJARAN KEJAKSAAN TINGGI ACEH'}]);
  DB.tm=ldj('spTm',[{id:'m1',nama:'Standar (Wakil Kajati, Asisten)',tembusan:$('tembusan').value},{id:'m0',nama:'Kosong',tembusan:''}]);
  ['tpl','tm'].forEach(k=>{fillSel(k);$(KIND[k].name).value=DB[k][0].nama;persist(k)})})();
 function expT(){const bl=new Blob([JSON.stringify({versi:1,tpl:DB.tpl,tm:DB.tm},null,1)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='template_surat_perintah.json';a.click()}
 $('impF').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=x=>{try{const j=JSON.parse(x.target.result);let n=0;
- ['tpl','tm'].forEach(k=>{const c=KIND[k],cur=$(c.sel).value;(Array.isArray(j[k])?j[k]:[]).forEach(t=>{if(!t||!t.id||!t.nama)return;const o={id:String(t.id),nama:String(t.nama)};c.f.forEach(q=>o[q]=String(t[q]??''));
+ ['tpl','tm'].forEach(k=>{const c=KIND[k],cur=$(c.sel).value;(Array.isArray(j[k])?j[k]:[]).forEach(t=>{if(!t||!t.id||!t.nama)return;const o={id:String(t.id),nama:String(t.nama)};c.f.forEach(q=>o[q]=String(t[q]??''));if(k==='tpl'&&t.untuk==null)o.untuk=[t.untuk1,t.untukLain].filter(x=>x).join('\n');
   const i=DB[k].findIndex(y=>y.id===o.id);i<0?DB[k].push(o):DB[k][i]=o;n++});persist(k);fillSel(k);$(c.sel).value=cur});
  alert(n+' template berhasil diimpor.')}catch(err){alert('File template tidak valid.')}e.target.value=''};r.readAsText(f)};
 try{$('tplApi').value=localStorage.getItem('tplApi')||'';}catch(e){}
@@ -249,7 +248,7 @@ function sprint(F,S){const mode=F.mode,w=[1555,287,8958];
   P('KEPALA KEJAKSAAN TINGGI ACEH,',{al:AL.CENTER,af:160}),
   tbl(w,[row('Menimbang',num(items(F.menimbang),'a')),row('Dasar',num(items(F.dasar))),
    [cell(w[0],[P('')]),cell(w[1],[P('')]),cell(w[2],[P('Memerintahkan:',{al:AL.CENTER,bf:60,af:60})])],
-   row('Kepada',kepada),row('Untuk',num([F.untuk1,...items(F.untukLain)]))]),gap(),...ttd(F),gap(200)];
+   row('Kepada',kepada),row('Untuk',num(items(F.untuk)))]),gap(),...ttd(F),gap(200)];
  const t=lines(F.tembusan);if(t.length)c.push(P('Tembusan:',{z:20,af:40,kn:1}),...t.map((x,i)=>P((i+1)+'.\t'+x,{z:20,l:400,h:400,kn:i<t.length-1})));
  return c}
 function lampiran(F,S){const w=[600,3800,4655,1745],H=(t,x)=>cell(x,[P(t,{b:1,al:AL.CENTER,z:20})],{b:allB,va:VerticalAlign.CENTER}),G=ch=>ch;
@@ -290,7 +289,7 @@ function sppdBelakang(F){const w=[5400,5400],Z={f:VD,z:18,af:20},c=(a,ch,b=allB)
    c(1,[Q('Telah diperiksa dengan keterangan bahwa perjalanan tersebut diatas telah benar dilakukan atas dasar perintah dan semata-mata untuk kepentingan jabatan dalam waktu yang sesingkat-singkatnya.')],{...allB,bottom:NB})],
   [c(0,pj(''),{...allB,top:NB}),c(1,pj(''),{...allB,top:NB})]],allB)]}
 function collect(){const F={mode:document.querySelector('input[name=mode]:checked').value};
- ['nomor','judul','untuk1','ttdNama','ttdPangkat','ttdNip','ttdJab','kota','nsppd','n0','dari','ke','lama','alat','gaji','pengikut','inst','mata','ket','menimbang','dasar','untukLain','tembusan','kepadaTabel','judulLamp'].forEach(k=>F[k]=V(k));
+ ['nomor','judul','untuk','ttdNama','ttdPangkat','ttdNip','ttdJab','kota','nsppd','n0','dari','ke','lama','alat','gaji','pengikut','inst','mata','ket','menimbang','dasar','tembusan','kepadaTabel','judulLamp'].forEach(k=>F[k]=V(k));F.untuk1=(items(F.untuk)[0]||{t:''}).t;
  {const k=F.ttdNama.indexOf(',');F.ttdNama=k<0?F.ttdNama.toUpperCase():F.ttdNama.slice(0,k).toUpperCase()+F.ttdNama.slice(k)}F.ttdJab=F.ttdJab.toUpperCase();
  F.tingkat=document.querySelector('input[name=tingkat]:checked').value;F.esign=$('esign').checked;F.esign2=$('esign2').checked;F.asPeng=$('asPeng').checked;F.tgl=$('tgl').value;F.tb=$('tb').value;F.tk=$('tk').value;return F}
 function buildDoc(F,S){const pg={size:{width:12240,height:18720},margin:{top:576,bottom:500,left:720,right:720}},sec=ch=>({properties:{page:pg},children:ch});
@@ -336,5 +335,5 @@ function numberize(id,fmt,start,sub){const ta=$(id),w=document.createElement('di
   ta.dispatchEvent(new Event('input',{bubbles:true}))});
  if(window.ResizeObserver)new ResizeObserver(draw).observe(ta);window.addEventListener('resize',draw);
  NUMS.push(draw);draw()}
-numberize('menimbang','a',1,1);numberize('dasar','1',1,1);numberize('untukLain','1',2,1);numberize('tembusan','1',1,0);
+numberize('menimbang','a',1,1);numberize('dasar','1',1,1);numberize('untuk','1',1,1);numberize('tembusan','1',1,0);
 </script></body></html>
