@@ -286,14 +286,14 @@ function sppdDepan(F,p,i,fol=[]){const z=18,V=(t,o={})=>P(t,{f:VD,z,af:20,...o})
    (fol.length?pengRow(fol):r(['8. Pengikut'],[F.pengikut])),r(['9. Pembebanan Anggaran','    a. Instansi','    b. Mata Anggaran'],['','a. '+F.inst,'b. '+F.mata]),
    r(['10. Keterangan lain-lain'],[F.ket])].flat()),gap(200),
   ...ttd(F,{f:VD,z})]}
-function sppdBelakang(F){const w=[5400,5400],Z={f:VD,z:18,af:20},c=(a,ch,b=allB)=>cell(w[a],ch,{b}),Q=t=>P(t,Z);
+function sppdBelakang(F){const w=[5400,5400],Z={f:VD,z:18,af:20},c=(a,ch,b=allB)=>cell(w[a],ch,{b}),Q=t=>P(t,Z),Lq=(l,v)=>P(l+'\t: '+v,{...Z,tabs:[1700]});
  const pj=(cap)=>[Q(cap),...jabLines(F).map((x,k)=>P(x,{...Z,al:AL.CENTER,bf:k?0:60})),...(F.esign2?[P([new ImageRun({type:'png',data:ESIGN,transformation:{width:100,height:48}})],{...Z,al:AL.CENTER,bf:40,af:40})]:[]),P(F.ttdNama,{...Z,b:1,u:1,al:AL.CENTER,bf:F.esign2?0:700}),P(F.ttdPangkat,{...Z,al:AL.CENTER}),P('NIP. '+F.ttdNip,{...Z,al:AL.CENTER})];
- const tiba=(t,tg)=>[Q('Tiba di : '+t),Q('Pada Tanggal : '+tg),gap(900)],brk=(d,k,tg)=>[Q('Berangkat dari : '+d),Q('Ke : '+k),Q('Pada Tanggal : '+tg),gap(900)];
+ const tiba=(t,tg)=>[Lq('Tiba di',t),Lq('Pada Tanggal',tg),gap(1700)],brk=(d,k,tg)=>[Lq('Berangkat dari',d),Lq('Ke',k),Lq('Pada Tanggal',tg),gap(1700)];
  return[tbl(w,[
-  [c(0,[Q(''),gap(900)]),c(1,[Q('Berangkat dari : '+F.dari),Q('(Tempat kedudukan)'),Q('Ke : '+F.ke),Q('Pada tanggal : '+dt(F.tb)),...pj('')])],
+  [c(0,[Q(''),gap(1700)]),c(1,[Lq('Berangkat dari',F.dari),Q('(Tempat kedudukan)'),Lq('Ke',F.ke),Lq('Pada tanggal',dt(F.tb)),...pj('')])],
   [c(0,tiba(F.ke,dt(F.tb))),c(1,brk(F.ke,'',''))],[c(0,tiba('','')),c(1,brk('','',''))],[c(0,tiba('','')),c(1,brk('','',''))],
-  [c(0,[Q('Tiba kembali : '+F.dari),Q('(Di tempat Kedudukan)'),Q('Pada Tanggal : '+dt(F.tk)),gap(60),Q('Pejabat yang memberi perintah')],{...allB,bottom:NB}),
-   c(1,[Q('Telah diperiksa dengan keterangan bahwa perjalanan tersebut diatas telah benar dilakukan atas dasar perintah dan semata-mata untuk kepentingan jabatan dalam waktu yang sesingkat-singkatnya.')],{...allB,bottom:NB})],
+  [c(0,[Lq('Tiba kembali',F.dari),Q('(Di tempat Kedudukan)'),Lq('Pada Tanggal',dt(F.tk)),gap(60),Q('Pejabat yang memberi perintah')],{...allB,bottom:NB}),
+   c(1,[P('Telah diperiksa dengan keterangan bahwa perjalanan tersebut diatas telah benar dilakukan atas dasar perintah dan semata-mata untuk kepentingan jabatan dalam waktu yang sesingkat-singkatnya.',{...Z,al:AL.BOTH})],{...allB,bottom:NB})],
   [c(0,pj(''),{...allB,top:NB}),c(1,pj(''),{...allB,top:NB})]],allB)]}
 function collect(){const F={mode:document.querySelector('input[name=mode]:checked').value};
  ['nomor','judul','untuk','ttdNama','ttdPangkat','ttdNip','ttdJab','kota','nsppd','n0','dari','ke','lama','alat','gaji','pengikut','inst','mata','ket','menimbang','dasar','tembusan','kepadaTabel','judulLamp'].forEach(k=>F[k]=V(k));F.untuk1=(items(F.untuk)[0]||{t:''}).t;
