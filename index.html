@@ -59,13 +59,14 @@ table{width:100%;border-collapse:collapse;font-size:.86em}td,th{border:1px solid
 <div class="card"><h3>3. Data Umum</h3>
 <div class="g2"><div><label>Nomor Surat Perintah</label><input id="nomor" value="PRIN-      /L.1/Cp../../2026"></div>
 <div><label>Tanggal Surat</label><input type="date" id="tgl"></div></div>
-<label>Pejabat Penandatangan (cari nama / NIP)</label>
+<label>Pejabat Penandatangan (cari nama / NIP) — minimal eselon III</label>
 <div class="dd"><input id="sq" placeholder="Ketik nama atau NIP..." autocomplete="off"><div class="l" id="sd"></div></div>
 <div class="g3"><div><label>Nama</label><input id="ttdNama" value="TEUKU RAHMATSYAH, S.H., M.Kn."></div>
 <div><label>Pangkat</label><input id="ttdPangkat" value="Jaksa Utama Muda"></div>
 <div><label>NIP</label><input id="ttdNip" value="197303311998031005"></div></div>
 <div class="g2"><div><label>Jabatan Penandatangan</label><input id="ttdJab" value="Kepala Kejaksaan Tinggi Aceh"></div>
 <div><label>Dikeluarkan di</label><input id="kota" value="Banda Aceh"></div></div>
+<label>Bentuk penandatanganan (otomatis dikenali dari jabatan; dapat diubah)</label><select id="ttdTipe"><option value="kepala">Kepala (langsung)</option><option value="wakil">Wakil Kepala</option><option value="an">a.n. Kepala (pejabat lain, minimal eselon III)</option></select>
 <label style="display:flex;gap:8px;align-items:center;font-weight:400"><input type="checkbox" id="esign" checked style="width:auto"> Sertakan gambar logo tanda tangan elektronik (#KEJAKSAANDIGITAL) di antara jabatan dan nama penandatangan</label>
 <label style="display:flex;gap:8px;align-items:center;font-weight:400;margin-top:6px"><input type="checkbox" id="esign2" checked style="width:auto"> Sertakan logo tanda tangan elektronik (#KEJAKSAANDIGITAL) pada ketiga penandatangan di lembar terakhir SPD (paling atas dan paling bawah)</label></div>
 
@@ -92,13 +93,13 @@ table{width:100%;border-collapse:collapse;font-size:.86em}td,th{border:1px solid
 
 <div class="card"><h3>6. Teks Tetap (dapat diedit — satu butir per baris)</h3>
 <div class="note" style="margin:-4px 0 6px">Untuk <b>sub-butir (level 2)</b> pada Menimbang, Dasar, dan Untuk: tekan <b>Tab</b> pada barisnya (Shift+Tab untuk mengembalikan). Penomorannya otomatis, misalnya 2. lalu a., b., c. Tekan Esc sebelum Tab untuk berpindah kolom dengan keyboard.</div>
-<label>Menimbang</label><textarea id="menimbang" rows="15">bahwa untuk memenuhi maksud surat ...., perlu menugaskan pejabat yang telah ditentukan mengikuti .... ;
+<label>Menimbang</label><textarea id="menimbang" rows="10">bahwa untuk memenuhi maksud surat ...., perlu menugaskan pejabat yang telah ditentukan mengikuti .... ;
 bahwa sebagai pelaksanaannya perlu dikeluarkan Surat Perintah Kepala Kejaksaan Tinggi Aceh.</textarea>
-<label>Dasar</label><textarea id="dasar" rows="15">Undang-Undang Nomor 16 Tahun 2004 tentang Kejaksaan Republik Indonesia sebagaimana telah diubah dengan Undang-Undang Nomor 11 Tahun 2021 tentang Perubahan atas Undang-Undang Nomor 16 Tahun 2004 tentang Kejaksaan Republik Indonesia ;
+<label>Dasar</label><textarea id="dasar" rows="14">Undang-Undang Nomor 16 Tahun 2004 tentang Kejaksaan Republik Indonesia sebagaimana telah diubah dengan Undang-Undang Nomor 11 Tahun 2021 tentang Perubahan atas Undang-Undang Nomor 16 Tahun 2004 tentang Kejaksaan Republik Indonesia ;
 Peraturan Presiden Nomor 38 Tahun 2010 tentang Organisasi dan Tata Kerja Kejaksaan yang telah beberapa kali diubah terakhir dengan Peraturan Presiden Nomor 45 Tahun 2026 tentang Perubahan Keempat atas Peraturan Presiden Nomor 38 Tahun 2010 tentang Organisasi dan Tata Kerja Kejaksaan Republik Indonesia ;
 Peraturan Jaksa Agung Nomor PER-006/A/JA/07/2017 tentang Organisasi dan Tata Kerja Kejaksaan Republik Indonesia sebagaimana telah beberapa kali diubah terakhir dengan Peraturan Kejaksaan Nomor 3 Tahun 2024 tentang Perubahan Keempat atas Peraturan Jaksa Agung Nomor PER-006/A/JA/07/2017 tentang Organisasi dan Tata Kerja Kejaksaan Republik Indonesia ;
 Surat ....</textarea>
-<label>Untuk — <b>butir 1 otomatis menjadi Maksud Perjalanan Dinas</b> pada SPD</label><textarea id="untuk" rows="15">Mengikuti .... pada hari .... tanggal .... bertempat di ....;
+<label>Untuk — <b>butir 1 otomatis menjadi Maksud Perjalanan Dinas</b> pada SPD</label><textarea id="untuk" rows="12">Mengikuti .... pada hari .... tanggal .... bertempat di ....;
 Melaporkan hasil pelaksanaan perintah ini kepada Kepala Kejaksaan Tinggi Aceh ;
 Melaksanakan perintah ini sebaik-baiknya dengan penuh rasa tanggung jawab.</textarea>
 <label>Template Tembusan</label>
@@ -155,7 +156,8 @@ function bind(inp,box,pick){$(inp).oninput=function(){const v=this.value.toLower
  pegawai.filter(p=>[nm(p),p.NIP,jb(p)].some(x=>(x||'').toString().toLowerCase().includes(v))).slice(0,10).forEach(p=>{
   const e=document.createElement('div');e.textContent=`${nm(p)} | NIP. ${p.NIP} | ${jb(p)}`;e.onclick=()=>{pick(p);d.innerHTML='';$(inp).value='';prevD()};d.appendChild(e)})}}
 bind('pq','pd',p=>{sel.push(p);draw()});
-bind('sq','sd',p=>{$('ttdNama').value=nm(p);$('ttdNip').value=p.NIP;$('ttdPangkat').value=gl(p).replace(/\s*\(.*?\)\s*/g,' ').replace(/\s*\/\s*(?:[IVX]+(?:\/[a-e])?)?\s*$/i,'').trim();$('ttdJab').value=jb(p)});
+bind('sq','sd',p=>{$('ttdNama').value=nm(p);$('ttdNip').value=p.NIP;$('ttdPangkat').value=gl(p).replace(/\s*\(.*?\)\s*/g,' ').replace(/\s*\/\s*(?:[IVX]+(?:\/[a-e])?)?\s*$/i,'').trim();$('ttdJab').value=jb(p);$('ttdTipe').value=tipeJab(jb(p))});
+function tipeJab(j){j=String(j||'').trim();return !j||/^kepala\s+kejaksaan\s+tinggi/i.test(j)?'kepala':/^wakil\s+kepala/i.test(j)?'wakil':'an'}
 function draw(){prevD();$('tb2').innerHTML=sel.map((p,i)=>`<tr><td>${i+1}</td><td>${nm(p)}<br><small>NIP. ${p.NIP}</small></td><td>${gl(p)}</td><td>${jb(p)}</td><td style="white-space:nowrap"><button class="s" onclick="mv(${i},-1)">▲</button> <button class="s" onclick="mv(${i},1)">▼</button> <button class="s" onclick="sel.splice(${i},1);draw()">✕</button></td></tr>`).join('')}
 function mv(i,d){const j=i+d;if(j<0||j>=sel.length)return;[sel[i],sel[j]]=[sel[j],sel[i]];draw()}
 const BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
@@ -236,9 +238,14 @@ function kopBesar(){const bl={top:NB,left:NB,right:NB,bottom:{style:BS.SINGLE,si
 function kopKecil(rp,rule){const bl={top:NB,left:NB,right:NB,bottom:rule?{style:BS.SINGLE,size:8,color:'000000'}:NB},c=AL.CENTER;
  return[tbl([2400,8400],[[cell(2400,[P([img(48,50)],{al:c}),P('KEJAKSAAN TINGGI',{f:AR,z:16,b:1,al:c}),P('ACEH',{f:AR,z:16,b:1,al:c})],{b:bl,va:VerticalAlign.CENTER}),
  cell(8400,rp,{b:bl,va:VerticalAlign.CENTER})]])]}
+const SATKER='KEJAKSAAN TINGGI ACEH';
+function jabLines(F){const j=String(F.ttdJab||'').toUpperCase().trim();
+ if(F.ttdTipe==='wakil')return['KEPALA '+SATKER,'WAKIL,'];
+ if(F.ttdTipe==='an')return['a.n. KEPALA '+SATKER,(j.replace(/\s*(PADA\s+)?KEJAKSAAN\s+TINGGI\s+ACEH\s*$/i,'').trim()||j)+','];
+ return[j+','];}
 function ttd(F,o={}){const L=6200,c={al:AL.CENTER,l:L,...o};const a=[];
  if(!o.noKeluar)a.push(P('Dikeluarkan di '+F.kota,c),P('Pada tanggal '+dt(F.tgl),c));
- return[...a,P(F.ttdJab+',',{...c,af:0}),...(F.esign?[P([new ImageRun({type:'png',data:ESIGN,transformation:{width:135,height:65}})],{al:AL.CENTER,l:L,bf:40,af:40})]:[]),P(F.ttdNama,{...c,b:1,u:1,bf:F.esign?0:900}),P(F.ttdPangkat,c),P('NIP. '+F.ttdNip,c)]}
+ return[...a,...jabLines(F).map(x=>P(x,{...c,af:0})),...(F.esign?[P([new ImageRun({type:'png',data:ESIGN,transformation:{width:135,height:65}})],{al:AL.CENTER,l:L,bf:40,af:40})]:[]),P(F.ttdNama,{...c,b:1,u:1,bf:F.esign?0:900}),P(F.ttdPangkat,c),P('NIP. '+F.ttdNip,c)]}
 const sdr=p=>['2','4'].includes((p.NIP||'').toString().charAt(14))?'Sdri. ':'Sdr. ';
 const pegText=(p,w)=>[...(w?[R(sdr(p),{b:1})]:[]),R(nm(p),{b:1}),R([gl(p),p.NIP&&'NIP. '+p.NIP,p.NRP&&'NRP. '+p.NRP,jb(p)].filter(Boolean).map(x=>', '+x).join(''))];
 function sprint(F,S){const mode=F.mode,w=[1555,287,8958];
@@ -271,7 +278,7 @@ function sppdDepan(F,p,i,fol=[]){const z=18,V=(t,o={})=>P(t,{f:VD,z,af:20,...o})
  const no=F.nsppd.replace('{n}',(+F.n0)+i),r=(L,Rr)=>{const n=Math.max(L.length,Rr.length);return Array.from({length:n},(_,k)=>{const last=k==n-1,o={b:last?bb:noB,mt:k?0:50,mb:last?50:0};return[cell(w[0],[LB(L[k]||'')],o),cell(w[1],[VB(Rr[k]||'')],o)]})};
  return[...kopKecil([V('Lembar ke\t:',{l:4000,tabs:[5300]}),V('Kode Nomor\t:',{l:4000,tabs:[5300]}),V('Nomor\t: '+no,{l:4000,tabs:[5300]})]),gap(60),
   P('SURAT PERJALANAN DINAS (SPD)',{f:VD,z:20,b:1,u:1,al:AL.CENTER,af:160}),
-  tbl(w,[r(['1. Pejabat berwenang memberi perintah'],[F.ttdJab.toUpperCase()]),r(['2. Nama pegawai yang diperintahkan'],[nm(p)]),
+  tbl(w,[r(['1. Pejabat berwenang memberi perintah'],['KEPALA '+SATKER]),r(['2. Nama pegawai yang diperintahkan'],[nm(p)]),
    r(['3. a. Pangkat dan Golongan menurut PP No.','    b. Jabatan','    c. Gaji Pokok','    d. Tingkat menurut Perjalanan Dinas'],['a. '+gl(p),'b. '+jb(p),'c. '+F.gaji,'d. '+F.tingkat]),
    r(['4. Maksud perjalanan dinas'],[F.untuk1]),r(['5. Alat angkutan yang dipergunakan'],[F.alat]),
    r(['6. a. Tempat berangkat','    b. Tempat tujuan'],['a. '+F.dari,'b. '+F.ke]),
@@ -280,7 +287,7 @@ function sppdDepan(F,p,i,fol=[]){const z=18,V=(t,o={})=>P(t,{f:VD,z,af:20,...o})
    r(['10. Keterangan lain-lain'],[F.ket])].flat()),gap(200),
   ...ttd(F,{f:VD,z})]}
 function sppdBelakang(F){const w=[5400,5400],Z={f:VD,z:18,af:20},c=(a,ch,b=allB)=>cell(w[a],ch,{b}),Q=t=>P(t,Z);
- const pj=(cap)=>[Q(cap),P(F.ttdJab+',',{...Z,al:AL.CENTER,bf:60}),...(F.esign2?[P([new ImageRun({type:'png',data:ESIGN,transformation:{width:100,height:48}})],{...Z,al:AL.CENTER,bf:40,af:40})]:[]),P(F.ttdNama,{...Z,b:1,u:1,al:AL.CENTER,bf:F.esign2?0:700}),P(F.ttdPangkat,{...Z,al:AL.CENTER}),P('NIP. '+F.ttdNip,{...Z,al:AL.CENTER})];
+ const pj=(cap)=>[Q(cap),...jabLines(F).map((x,k)=>P(x,{...Z,al:AL.CENTER,bf:k?0:60})),...(F.esign2?[P([new ImageRun({type:'png',data:ESIGN,transformation:{width:100,height:48}})],{...Z,al:AL.CENTER,bf:40,af:40})]:[]),P(F.ttdNama,{...Z,b:1,u:1,al:AL.CENTER,bf:F.esign2?0:700}),P(F.ttdPangkat,{...Z,al:AL.CENTER}),P('NIP. '+F.ttdNip,{...Z,al:AL.CENTER})];
  const tiba=(t,tg)=>[Q('Tiba di : '+t),Q('Pada Tanggal : '+tg),gap(900)],brk=(d,k,tg)=>[Q('Berangkat dari : '+d),Q('Ke : '+k),Q('Pada Tanggal : '+tg),gap(900)];
  return[tbl(w,[
   [c(0,[Q(''),gap(900)]),c(1,[Q('Berangkat dari : '+F.dari),Q('(Tempat kedudukan)'),Q('Ke : '+F.ke),Q('Pada tanggal : '+dt(F.tb)),...pj('')])],
@@ -290,7 +297,7 @@ function sppdBelakang(F){const w=[5400,5400],Z={f:VD,z:18,af:20},c=(a,ch,b=allB)
   [c(0,pj(''),{...allB,top:NB}),c(1,pj(''),{...allB,top:NB})]],allB)]}
 function collect(){const F={mode:document.querySelector('input[name=mode]:checked').value};
  ['nomor','judul','untuk','ttdNama','ttdPangkat','ttdNip','ttdJab','kota','nsppd','n0','dari','ke','lama','alat','gaji','pengikut','inst','mata','ket','menimbang','dasar','tembusan','kepadaTabel','judulLamp'].forEach(k=>F[k]=V(k));F.untuk1=(items(F.untuk)[0]||{t:''}).t;
- {const k=F.ttdNama.indexOf(',');F.ttdNama=k<0?F.ttdNama.toUpperCase():F.ttdNama.slice(0,k).toUpperCase()+F.ttdNama.slice(k)}F.ttdJab=F.ttdJab.toUpperCase();
+ {const k=F.ttdNama.indexOf(',');F.ttdNama=k<0?F.ttdNama.toUpperCase():F.ttdNama.slice(0,k).toUpperCase()+F.ttdNama.slice(k)}F.ttdJab=F.ttdJab.toUpperCase();F.ttdTipe=$('ttdTipe').value;
  F.tingkat=document.querySelector('input[name=tingkat]:checked').value;F.esign=$('esign').checked;F.esign2=$('esign2').checked;F.asPeng=$('asPeng').checked;F.tgl=$('tgl').value;F.tb=$('tb').value;F.tk=$('tk').value;return F}
 function buildDoc(F,S){const pg={size:{width:12240,height:18720},margin:{top:576,bottom:500,left:720,right:720}},sec=ch=>({properties:{page:pg},children:ch});
  const s=[sec(sprint(F,S))];if(F.mode==='tabel')s.push(sec(lampiran(F,S)));
@@ -336,4 +343,5 @@ function numberize(id,fmt,start,sub){const ta=$(id),w=document.createElement('di
  if(window.ResizeObserver)new ResizeObserver(draw).observe(ta);window.addEventListener('resize',draw);
  NUMS.push(draw);draw()}
 numberize('menimbang','a',1,1);numberize('dasar','1',1,1);numberize('untuk','1',1,1);numberize('tembusan','1',1,0);
+$('ttdTipe').value=tipeJab($('ttdJab').value);$('ttdJab').addEventListener('change',()=>$('ttdTipe').value=tipeJab($('ttdJab').value));
 </script></body></html>
